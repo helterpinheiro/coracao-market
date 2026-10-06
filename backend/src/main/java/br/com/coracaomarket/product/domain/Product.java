@@ -2,6 +2,8 @@ package br.com.coracaomarket.product.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -21,8 +23,9 @@ public class Product {
     @Column(nullable = false, length = 500)
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
-    private String category;
+    private ProductCategory category;
 
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal price;
@@ -40,5 +43,59 @@ public class Product {
     private OffsetDateTime updatedAt;
 
     protected Product() {
+    }
+
+    public Product(
+        String name,
+        String description,
+        ProductCategory category,
+        BigDecimal price,
+        Integer stock
+    ) {
+        this.id = UUID.randomUUID();
+        this.name = name;
+        this.description = description;
+        this.category = category;
+        this.price = price;
+        this.stock = stock;
+        this.active = true;
+        this.createdAt = OffsetDateTime.now();
+        this.updatedAt = OffsetDateTime.now();
+    }
+
+    public UUID getId() {
+    return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public ProductCategory getCategory() {
+        return category;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
     }
 }
