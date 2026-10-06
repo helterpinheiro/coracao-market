@@ -1,0 +1,20 @@
+services:
+
+  postgres:
+    image: postgres:17-alpine
+
+    container_name: coracao-market-postgres
+
+    environment:
+      POSTGRES_DB: coracao_market
+      POSTGRES_USER: coracao
+      POSTGRES_PASSWORD: coracao
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
