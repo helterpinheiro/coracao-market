@@ -1,20 +1,24 @@
 spring:
-
   application:
     name: coracao-market
-  
+
   datasource:
     url: jdbc:postgresql://localhost:5432/coracao_market
     username: coracao
     password: coracao
-  
+
   jpa:
     hibernate:
       ddl-auto: validate
     open-in-view: false
-  
+
   flyway:
-    enable: true
+    enabled: true
 
 server:
   port: 8080
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:change-this-development-secret-key-32-characters}
+    expiration: 3600000
