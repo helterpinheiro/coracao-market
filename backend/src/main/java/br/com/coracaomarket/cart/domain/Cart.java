@@ -79,6 +79,23 @@ public class Cart {
                 );
     }
 
+    public void checkout() {
+        if (status != CartStatus.ACTIVE) {
+            throw new IllegalStateException(
+                "Only active carts can be checked out"
+            );
+        }
+
+        if (items.isEmpty()) {
+            throw new IllegalStateException(
+                "Cannot checkout an empty cart"
+            );
+        }
+
+        this.status = CartStatus.CHECKED_OUT;
+        this.updatedAt = OffsetDateTime.now();
+    }
+
     private void touch() {
         this.updatedAt = OffsetDateTime.now();
     }
