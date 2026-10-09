@@ -1,12 +1,13 @@
 <app-navbar
   [search]="search()"
   [cartCount]="cartCount()"
-  (searchChange)="search.set($event)"
+  (searchChange)="updateSearch($event)"
   (menuToggle)="sidebarOpen.set(!sidebarOpen())"
 />
 
 <main class="page-container">
 
+  <!-- SIDEBAR -->
   <div
     class="sidebar-container"
     [class.open]="sidebarOpen()"
@@ -14,15 +15,14 @@
     <app-sidebar
       [categories]="categories()"
       [selectedCategory]="selectedCategory()"
-      [maxPrice]="maxPrice()"
       [sortOrder]="sortOrder()"
-      (categoryChange)="selectedCategory.set($event)"
-      (maxPriceChange)="maxPrice.set($event)"
-      (sortOrderChange)="sortOrder.set($event)"
+      (categoryChange)="updateCategory($event)"
+      (sortOrderChange)="updateSortOrder($event)"
       (closeSidebar)="sidebarOpen.set(false)"
     />
   </div>
 
+  <!-- FUNDO ESCURO NO MOBILE -->
   @if (sidebarOpen()) {
     <button
       class="sidebar-backdrop"
@@ -32,13 +32,19 @@
     ></button>
   }
 
+  <!-- CATÁLOGO -->
   <section class="catalog">
 
+    <!-- BANNER -->
     <div class="welcome-banner">
       <div>
-        <span class="welcome-tag">💙 Bem-vindo ao nosso mercado!</span>
+        <span class="welcome-tag">
+          💙 Bem-vindo ao nosso mercado!
+        </span>
 
-        <h1>Seu mercado de sempre, agora mais pertinho!</h1>
+        <h1>
+          Seu mercado de sempre, agora mais pertinho!
+        </h1>
 
         <p>
           Escolha seus produtos favoritos com praticidade,
@@ -51,6 +57,7 @@
       </div>
     </div>
 
+    <!-- CABEÇALHO DO CATÁLOGO -->
     <div class="catalog-header">
       <div>
         <h2>Nossos produtos</h2>
@@ -58,24 +65,99 @@
       </div>
 
       <span class="product-count">
-        {{ filteredProducts().length }} produtos
+        {{ totalElements() }} produtos
       </span>
+
+      <button
+        type="button"
+        class="clear-filters-button"
+        (click)="clearFilters()"
+      >
+        Limpar filtros
+      </button>
     </div>
 
-    @if (filteredProducts().length > 0) {
+    <!-- ESTADO DE CARREGAMENTO -->
+    @if (loading()) {
+
+      <div class="empty-state" role="status">
+        <h3>Carregando produtos...</h3>
+        <p>Estamos preparando nosso catálogo para você.</p>
+      </div>
+
+    } @else if (error()) {
+
+      <!-- ESTADO DE ERRO -->
+      <div class="empty-state" role="alert">
+        <h3>Não foi possível carregar os produtos</h3>
+
+        <p>{{ error() }}</p>
+
+        <button
+          type="button"
+          (click)="loadProducts()"
+        >
+          Tentar novamente
+        </button>
+      </div>
+
+    } @else if (filteredProducts().length > 0) {
+
+      <!-- LISTA DE PRODUTOS -->
       <div class="products-grid">
+
         @for (product of filteredProducts(); track product.id) {
+
           <app-product-card
             [product]="product"
             (addToCart)="addToCart($event)"
           />
+
         }
+
       </div>
+
+      <!-- PAGINAÇÃO -->
+      @if (totalPages() > 1) {
+
+        <nav
+          class="pagination"
+          aria-label="Paginação dos produtos"
+        >
+          <button
+            type="button"
+            [disabled]="page() === 0"
+            (click)="previousPage()"
+          >
+            Anterior
+          </button>
+
+          <span>
+            Página {{ page() + 1 }} de {{ totalPages() }}
+          </span>
+
+          <button
+            type="button"
+            [disabled]="page() + 1 >= totalPages()"
+            (click)="nextPage()"
+          >
+            Próxima
+          </button>
+        </nav>
+
+      }
+
     } @else {
+
+      <!-- CATÁLOGO VAZIO -->
       <div class="empty-state">
         <h3>Nenhum produto encontrado</h3>
-        <p>Tente ajustar os filtros ou pesquisar outro produto.</p>
+
+        <p>
+          Tente ajustar os filtros ou pesquisar outro produto.
+        </p>
       </div>
+
     }
 
   </section>

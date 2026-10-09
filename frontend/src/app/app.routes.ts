@@ -8,6 +8,12 @@ export const routes: Routes = [
         .then(m => m.ProductList)
   },
   {
+    path: 'login',
+    loadComponent: () =>
+      import('../app/features/auth/pages/login')
+        .then(m => m.Login)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

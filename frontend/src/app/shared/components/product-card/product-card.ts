@@ -1,7 +1,10 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 
-import { Product } from '../../../features/products/models/product.model';
+import {
+  ProductCategory,
+  ProductView
+} from '../../../features/products/models/product.model';
 
 @Component({
   selector: 'app-product-card',
@@ -11,7 +14,18 @@ import { Product } from '../../../features/products/models/product.model';
   styleUrl: './product-card.scss'
 })
 export class ProductCard {
-  @Input({ required: true }) product!: Product;
+  @Input({ required: true }) product!: ProductView;
 
-  @Output() addToCart = new EventEmitter<Product>();
+  @Output() addToCart = new EventEmitter<ProductView>();
+
+  readonly categoryLabels: Record<ProductCategory, string> = {
+    FOOD: 'Mercearia',
+    DAIRY: 'Laticínios',
+    BEVERAGE: 'Bebidas',
+    HYGIENE: 'Higiene pessoal',
+    CLEANING: 'Limpeza',
+    BAKERY: 'Padaria',
+    PRODUCE: 'Hortifrúti',
+    MEAT: 'Açougue'
+  };
 }

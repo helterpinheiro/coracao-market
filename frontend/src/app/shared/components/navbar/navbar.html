@@ -1,6 +1,7 @@
 <header class="navbar">
   <div class="navbar-container">
 
+    <!-- Menu lateral -->
     <button
       class="menu-toggle"
       type="button"
@@ -10,7 +11,8 @@
       ☰
     </button>
 
-    <a class="brand" href="/">
+    <!-- Marca -->
+    <a class="brand" routerLink="/">
       <span class="brand-icon">🦫</span>
 
       <div class="brand-text">
@@ -19,6 +21,7 @@
       </div>
     </a>
 
+    <!-- Pesquisa -->
     <div class="search">
       <label class="sr-only" for="product-search">
         Pesquisar produtos
@@ -35,20 +38,50 @@
       <span aria-hidden="true">⌕</span>
     </div>
 
+    <!-- Conta e carrinho -->
     <nav class="actions" aria-label="Navegação da conta">
-      <a href="/login" class="account">
-        <span aria-hidden="true">👤</span>
-        <span>Minha conta</span>
-      </a>
 
-      <a href="/cart" class="cart">
+      @if (isAuthenticated()) {
+
+        <!-- Usuário autenticado -->
+        <div class="account-user">
+          <span aria-hidden="true">👤</span>
+
+          <span class="account-name">
+            Olá, {{ currentUser()?.name }}
+          </span>
+
+          <button
+            type="button"
+            class="logout-button"
+            (click)="logout()"
+          >
+            Sair
+          </button>
+        </div>
+
+      } @else {
+
+        <!-- Visitante -->
+        <a routerLink="/login" class="account">
+          <span aria-hidden="true">👤</span>
+          <span>Entrar</span>
+        </a>
+
+      }
+
+      <!-- Carrinho -->
+      <a routerLink="/cart" class="cart">
         <span aria-hidden="true">🛒</span>
         <span>Carrinho</span>
 
         @if (cartCount > 0) {
-          <span class="cart-count">{{ cartCount }}</span>
+          <span class="cart-count">
+            {{ cartCount }}
+          </span>
         }
       </a>
+
     </nav>
 
   </div>

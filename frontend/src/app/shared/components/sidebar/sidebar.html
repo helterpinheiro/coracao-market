@@ -31,26 +31,10 @@
           [class.active]="selectedCategory === category"
           (click)="categoryChange.emit(category)"
         >
-          {{ category }}
+          {{ categoryLabels[category] ?? category }}
         </button>
       }
     </div>
-  </section>
-
-  <section class="filter-section">
-    <h3>Preço máximo</h3>
-
-    <label for="max-price">Até quanto deseja gastar?</label>
-
-    <input
-      id="max-price"
-      type="number"
-      min="0"
-      step="0.01"
-      placeholder="Ex.: 50,00"
-      [ngModel]="maxPrice"
-      (ngModelChange)="updateMaxPrice($event)"
-    />
   </section>
 
   <section class="filter-section">

@@ -1,8 +1,31 @@
-import { Component, computed, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal
+} from '@angular/core';
+
+import {
+  Subject,
+  debounceTime,
+  distinctUntilChanged,
+  takeUntil
+} from 'rxjs';
+
 import { Navbar } from '../../../../shared/components/navbar/navbar';
 import { Sidebar } from '../../../../shared/components/sidebar/sidebar';
 import { ProductCard } from '../../../../shared/components/product-card/product-card';
-import { Product } from '../../models/product.model';
+
+import {
+  Product,
+  ProductCategory,
+  ProductView
+} from '../../models/product.model';
+
+import { ProductService } from '../../services/product';
+import { getProductImage } from '../../utils/product-image.util';
 
 @Component({
   selector: 'app-product-list',
@@ -11,111 +34,192 @@ import { Product } from '../../models/product.model';
   templateUrl: './product-list.html',
   styleUrl: './product-list.scss'
 })
-export class ProductList {
+export class ProductList implements OnInit, OnDestroy {
+  private readonly productService = inject(ProductService);
+
+  private readonly searchSubject = new Subject<string>();
+  private readonly destroy$ = new Subject<void>();
+
+  private requestId = 0;
+
   search = signal('');
   selectedCategory = signal('');
-  maxPrice = signal<number | null>(null);
   sortOrder = signal('default');
+
   sidebarOpen = signal(false);
   cartCount = signal(0);
 
-  products = signal<Product[]>([
-    {
-      id: 1,
-      name: 'Banana prata 1kg',
-      category: 'Hortifrúti',
-      price: 6.99,
-      stock: 30,
-      image: 'assets/products/banana.png'
-    },
-    {
-      id: 2,
-      name: 'Maçã vermelha 1kg',
-      category: 'Hortifrúti',
-      price: 9.90,
-      stock: 25,
-      image: 'assets/products/maca.png'
-    },
-    {
-      id: 3,
-      name: 'Arroz branco 1kg',
-      category: 'Mercearia',
-      price: 7.49,
-      stock: 50,
-      image: 'assets/products/arroz.png'
-    },
-    {
-      id: 4,
-      name: 'Leite integral 1L',
-      category: 'Laticínios',
-      price: 5.99,
-      stock: 40,
-      image: 'assets/products/leite.png'
-    },
-    {
-      id: 5,
-      name: 'Pão francês 1kg',
-      category: 'Padaria',
-      price: 14.90,
-      stock: 20,
-      image: 'assets/products/pao.png'
-    },
-    {
-      id: 6,
-      name: 'Tomate 1kg',
-      category: 'Hortifrúti',
-      price: 8.49,
-      stock: 35,
-      image: 'assets/products/tomate.png'
-    }
-  ]);
+  loading = signal(false);
+  error = signal<string | null>(null);
+
+  page = signal(0);
+  readonly pageSize = 12;
+
+  totalElements = signal(0);
+  totalPages = signal(0);
+
+  products = signal<ProductView[]>([]);
+
+  private readonly categoryLabels: Record<ProductCategory, string> = {
+    FOOD: 'Mercearia',
+    DAIRY: 'Laticínios',
+    BEVERAGE: 'Bebidas',
+    HYGIENE: 'Higiene pessoal',
+    CLEANING: 'Limpeza',
+    BAKERY: 'Padaria',
+    PRODUCE: 'Hortifrúti',
+    MEAT: 'Açougue'
+  };
 
   categories = computed(() =>
-    [...new Set(this.products().map(product => product.category))]
-      .sort((a, b) => a.localeCompare(b, 'pt-BR'))
+    Object.keys(this.categoryLabels).sort((a, b) =>
+      this.categoryLabels[a as ProductCategory].localeCompare(
+        this.categoryLabels[b as ProductCategory],
+        'pt-BR'
+      )
+    )
   );
 
-  filteredProducts = computed(() => {
-    const search = this.search().trim().toLocaleLowerCase('pt-BR');
-    const category = this.selectedCategory();
-    const maxPrice = this.maxPrice();
-    const sortOrder = this.sortOrder();
+  // O filtro de preço máximo será implementado no backend.
+  // Por enquanto, exibimos os produtos retornados pela API.
+  filteredProducts = computed(() => this.products());
 
-    const result = this.products().filter(product => {
-      const matchesSearch =
-        product.name.toLocaleLowerCase('pt-BR').includes(search);
+  ngOnInit(): void {
+    this.searchSubject
+      .pipe(
+        debounceTime(350),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        this.page.set(0);
+        this.loadProducts();
+      });
 
-      const matchesCategory =
-        !category || product.category === category;
+    this.loadProducts();
+  }
 
-      const matchesPrice =
-        maxPrice === null || product.price <= maxPrice;
+  ngOnDestroy(): void {
+    this.requestId++;
 
-      return matchesSearch && matchesCategory && matchesPrice;
-    });
+    this.destroy$.next();
+    this.destroy$.complete();
 
-    switch (sortOrder) {
-      case 'price-asc':
-        return result.sort((a, b) => a.price - b.price);
+    this.searchSubject.complete();
+  }
 
-      case 'price-desc':
-        return result.sort((a, b) => b.price - a.price);
+  loadProducts(): void {
+    const currentRequestId = ++this.requestId;
 
-      case 'name':
-        return result.sort((a, b) =>
-          a.name.localeCompare(b.name, 'pt-BR')
-        );
+    this.loading.set(true);
+    this.error.set(null);
 
-      default:
-        return result;
+    const sortMap: Record<string, string> = {
+      'price-asc': 'price,asc',
+      'price-desc': 'price,desc',
+      name: 'name,asc'
+    };
+
+    this.productService.findAll({
+      name: this.search(),
+      category: (this.selectedCategory() || undefined) as
+        ProductCategory | undefined,
+      page: this.page(),
+      size: this.pageSize,
+      sort: sortMap[this.sortOrder()]
+    })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: response => {
+          // Ignora respostas de requisições antigas.
+          if (currentRequestId !== this.requestId) {
+            return;
+          }
+
+          const products: ProductView[] = response.content.map(product => ({
+            ...product,
+            image: getProductImage(product)
+          }));
+
+          this.products.set(products);
+          this.totalElements.set(response.totalElements);
+          this.totalPages.set(response.totalPages);
+
+          this.loading.set(false);
+        },
+
+        error: err => {
+          if (currentRequestId !== this.requestId) {
+            return;
+          }
+
+          console.error('Erro ao carregar produtos:', err);
+
+          this.products.set([]);
+          this.totalElements.set(0);
+          this.totalPages.set(0);
+
+          this.error.set('Não foi possível carregar os produtos.');
+          this.loading.set(false);
+        }
+      });
+  }
+
+  updateSearch(value: string): void {
+    this.search.set(value);
+
+    // Invalida a busca anterior enquanto aguardamos o debounce.
+    this.requestId++;
+
+    this.searchSubject.next(value);
+  }
+
+  updateCategory(value: string): void {
+    this.selectedCategory.set(value);
+    this.page.set(0);
+
+    this.loadProducts();
+  }
+
+  updateSortOrder(value: string): void {
+    this.sortOrder.set(value);
+    this.page.set(0);
+
+    this.loadProducts();
+  }
+
+  clearFilters(): void {
+    this.search.set('');
+    this.selectedCategory.set('');
+    this.sortOrder.set('default');
+    this.page.set(0);
+
+    this.loadProducts();
+  }
+
+  previousPage(): void {
+    if (this.page() > 0 && !this.loading()) {
+      this.page.update(page => page - 1);
+      this.loadProducts();
     }
-  });
+  }
+
+  nextPage(): void {
+    if (
+      this.page() + 1 < this.totalPages() &&
+      !this.loading()
+    ) {
+      this.page.update(page => page + 1);
+      this.loadProducts();
+    }
+  }
 
   addToCart(product: Product): void {
     if (product.stock <= 0) {
       return;
     }
 
+    // Temporário: integração real com o carrinho será feita depois.
     this.cartCount.update(count => count + 1);
   }
 }

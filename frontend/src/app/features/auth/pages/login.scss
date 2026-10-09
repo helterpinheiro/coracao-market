@@ -1,0 +1,157 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: linear-gradient(
+    135deg,
+    #e8faf7 0%,
+    #f5fffd 55%,
+    #d9f4ee 100%
+  );
+}
+
+.login-card {
+  width: 100%;
+  max-width: 440px;
+  padding: 36px;
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 16px 48px rgba(0, 80, 75, 0.1);
+}
+
+.back-link {
+  color: #168c80;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.brand {
+  text-align: center;
+  margin: 28px 0 32px;
+
+  .mascot {
+    display: block;
+    font-size: 64px;
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    margin: 0;
+    color: #087d72;
+    font-size: 28px;
+  }
+
+  p {
+    margin-top: 8px;
+    color: #64748b;
+    font-size: 14px;
+  }
+}
+
+.form-heading {
+  margin-bottom: 24px;
+
+  h2 {
+    margin: 0 0 8px;
+    font-size: 23px;
+    color: #1e293b;
+  }
+
+  p {
+    margin: 0;
+    color: #64748b;
+    font-size: 14px;
+  }
+}
+
+.form-group {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s;
+
+    &:focus {
+      border-color: #10a99a;
+      box-shadow: 0 0 0 3px rgba(16, 169, 154, 0.12);
+    }
+  }
+}
+
+.error-message {
+  padding: 12px;
+  margin-bottom: 16px;
+  background: #fff1f2;
+  color: #be123c;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.login-button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: #0d9488;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover:not(:disabled) {
+    background: #0f766e;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.register-text {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 13px;
+  color: #64748b;
+
+  span {
+    color: #0d9488;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 26px 22px;
+  }
+
+  .brand h1 {
+    font-size: 24px;
+  }
+}
