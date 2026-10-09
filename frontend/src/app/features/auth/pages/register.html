@@ -1,0 +1,302 @@
+<div class="register-page">
+
+  <div class="register-container">
+
+    <!-- LADO ESQUERDO -->
+    <section class="register-brand">
+
+      <a routerLink="/" class="brand-logo">
+        <img
+          src="/assets/mascot/mascot-heart.png"
+          alt="Castorzinho segurando um coração"
+          class="auth-mascot"
+        />
+        <strong>Coração Market</strong>
+      </a>
+
+      <div class="brand-content">
+
+        <span class="brand-tag">
+          💙 Você no coração da gente
+        </span>
+
+        <h1>
+          Suas compras ficam
+          ainda melhores
+          por aqui.
+        </h1>
+
+        <p>
+          Crie sua conta e aproveite uma experiência
+          de compras simples, rápida e prática.
+        </p>
+
+        <div class="brand-benefits">
+
+          <div class="benefit">
+            <span>🛒</span>
+            <div>
+              <strong>Seu carrinho</strong>
+              <small>Escolha seus produtos favoritos.</small>
+            </div>
+          </div>
+
+          <div class="benefit">
+            <span>📦</span>
+            <div>
+              <strong>Seus pedidos</strong>
+              <small>Acompanhe suas compras em um só lugar.</small>
+            </div>
+          </div>
+
+          <div class="benefit">
+            <span>💙</span>
+            <div>
+              <strong>Feito para você</strong>
+              <small>Uma experiência prática e acolhedora.</small>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <p class="brand-footer">
+        Coração Market — Você no coração da gente.
+      </p>
+
+    </section>
+
+    <!-- FORMULÁRIO -->
+    <section class="register-form-section">
+
+      <div class="form-container">
+
+        <div class="mobile-brand">
+          <a routerLink="/">
+            🦫 Coração Market
+          </a>
+        </div>
+
+        <div class="form-header">
+
+          <span class="form-tag">
+            COMEÇAR AGORA
+          </span>
+
+          <h2>Crie sua conta 💙</h2>
+
+          <p>
+            Preencha seus dados para começar
+            a comprar no Coração Market.
+          </p>
+
+        </div>
+
+        @if (error()) {
+          <div class="error-message" role="alert">
+            <span>⚠ {{ error() }}</span>
+          </div>
+        }
+
+        <form
+          [formGroup]="form"
+          (ngSubmit)="submit()"
+          novalidate
+        >
+
+          <!-- NOME -->
+          <div class="form-group">
+
+            <label for="name">
+              Nome completo
+            </label>
+
+            <input
+              id="name"
+              type="text"
+              formControlName="name"
+              placeholder="Como podemos chamar você?"
+              autocomplete="name"
+              maxlength="120"
+              [class.input-error]="name.invalid && name.touched"
+            />
+
+            @if (name.touched && name.hasError('required')) {
+              <small class="field-error">
+                Informe seu nome.
+              </small>
+            }
+
+            @if (name.touched && name.hasError('maxlength')) {
+              <small class="field-error">
+                O nome deve ter no máximo 120 caracteres.
+              </small>
+            }
+
+          </div>
+
+          <!-- EMAIL -->
+          <div class="form-group">
+
+            <label for="email">
+              E-mail
+            </label>
+
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              placeholder="seuemail@exemplo.com"
+              autocomplete="email"
+              [class.input-error]="email.invalid && email.touched"
+            />
+
+            @if (email.touched && email.hasError('required')) {
+              <small class="field-error">
+                Informe seu e-mail.
+              </small>
+            } @else if (email.touched && email.hasError('email')) {
+              <small class="field-error">
+                Informe um e-mail válido.
+              </small>
+            }
+
+          </div>
+
+          <!-- SENHA -->
+          <div class="form-group">
+
+            <label for="password">
+              Senha
+            </label>
+
+            <div class="password-field">
+
+              <input
+                id="password"
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="password"
+                placeholder="Crie uma senha"
+                autocomplete="new-password"
+                [class.input-error]="password.invalid && password.touched"
+              />
+
+              <button
+                type="button"
+                class="password-toggle"
+                (click)="togglePassword()"
+                [attr.aria-label]="showPassword() ? 'Ocultar senha' : 'Mostrar senha'"
+              >
+                {{ showPassword() ? 'Ocultar' : 'Mostrar' }}
+              </button>
+
+            </div>
+
+            <small class="password-hint">
+              Utilize entre 8 e 72 caracteres.
+            </small>
+
+            @if (password.touched && password.hasError('required')) {
+              <small class="field-error">
+                Informe uma senha.
+              </small>
+            } @else if (
+              password.touched &&
+              (password.hasError('minlength') || password.hasError('maxlength'))
+            ) {
+              <small class="field-error">
+                A senha deve ter entre 8 e 72 caracteres.
+              </small>
+            }
+
+          </div>
+
+          <!-- CONFIRMAÇÃO -->
+          <div class="form-group">
+
+            <label for="confirmPassword">
+              Confirmar senha
+            </label>
+
+            <div class="password-field">
+
+              <input
+                id="confirmPassword"
+                [type]="showConfirmPassword() ? 'text' : 'password'"
+                formControlName="confirmPassword"
+                placeholder="Digite sua senha novamente"
+                autocomplete="new-password"
+                [class.input-error]="confirmPassword.touched && (confirmPassword.invalid || form.hasError('passwordsMismatch'))"
+              />
+
+              <button
+                type="button"
+                class="password-toggle"
+                (click)="toggleConfirmPassword()"
+                [attr.aria-label]="showConfirmPassword() ? 'Ocultar senha' : 'Mostrar senha'"
+              >
+                {{ showConfirmPassword() ? 'Ocultar' : 'Mostrar' }}
+              </button>
+
+            </div>
+
+            @if (
+              confirmPassword.touched &&
+              confirmPassword.hasError('required')
+            ) {
+              <small class="field-error">
+                Confirme sua senha.
+              </small>
+            } @else if (
+              confirmPassword.touched &&
+              form.hasError('passwordsMismatch')
+            ) {
+              <small class="field-error">
+                As senhas não coincidem.
+              </small>
+            }
+
+          </div>
+
+          <!-- BOTÃO -->
+          <button
+            type="submit"
+            class="submit-button"
+            [disabled]="loading()"
+          >
+
+            @if (loading()) {
+              Criando sua conta...
+            } @else {
+              Criar minha conta →
+            }
+
+          </button>
+
+        </form>
+
+        <div class="login-link">
+
+          Já possui uma conta?
+
+          <a
+            routerLink="/login"
+            [queryParams]="returnUrl ? { returnUrl: returnUrl } : {}"
+          >
+            Entrar
+          </a>
+
+        </div>
+
+        <div class="form-footer">
+          <span>🔒 Seus dados são utilizados para sua conta.</span>
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+</div>

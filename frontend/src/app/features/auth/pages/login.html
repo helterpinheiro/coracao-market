@@ -6,7 +6,11 @@
     </a>
 
     <div class="brand">
-      <span class="mascot" aria-hidden="true">🦫</span>
+      <img
+        src="/assets/mascot/mascot-heart.png"
+        alt="Castorzinho segurando um coração"
+        class="auth-mascot"
+      />
 
       <h1>Coração Market</h1>
 
@@ -71,10 +75,16 @@
 
     </form>
 
-    <p class="register-text">
-      Ainda não tem uma conta?
-      <span>Em breve, você poderá se cadastrar por aqui.</span>
-    </p>
+    <div class="register-link">
+    <span>Ainda não tem uma conta?</span>
+
+    <a
+        routerLink="/register"
+        [queryParams]="returnUrl ? { returnUrl: returnUrl } : {}"
+    >
+        Criar minha conta
+    </a>
+    </div>
 
   </section>
 </main>

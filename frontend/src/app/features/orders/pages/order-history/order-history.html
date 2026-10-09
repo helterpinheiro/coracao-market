@@ -1,0 +1,233 @@
+<app-navbar [cartCount]="cartCount()" />
+
+<main class="orders-page">
+
+  <!-- CABEÇALHO -->
+  <header class="orders-header">
+
+    <a
+      routerLink="/"
+      class="back-link"
+    >
+      ← Voltar ao catálogo
+    </a>
+
+    <div class="header-content">
+
+      <div>
+        <span class="header-tag">
+          💙 Coração Market
+        </span>
+
+        <h1>Meus pedidos</h1>
+
+        <p>
+          Acompanhe suas compras e consulte
+          os detalhes de cada pedido.
+        </p>
+      </div>
+
+      <div
+        class="header-icon"
+        aria-hidden="true"
+      >
+        📦
+      </div>
+
+    </div>
+
+  </header>
+
+  <!-- ERROS -->
+  @if (error()) {
+
+    <div
+      class="orders-feedback"
+      role="alert"
+    >
+      <span>{{ error() }}</span>
+
+      <button
+        type="button"
+        aria-label="Fechar mensagem"
+        (click)="error.set(null)"
+      >
+        ×
+      </button>
+    </div>
+
+  }
+
+  <!-- CARREGAMENTO -->
+  @if (loading()) {
+
+    <section
+      class="orders-state"
+      role="status"
+    >
+      <div class="state-icon">📦</div>
+
+      <h2>Carregando seus pedidos...</h2>
+
+      <p>
+        Estamos buscando seu histórico de compras.
+      </p>
+    </section>
+
+  } @else if (orders().length === 0 && !error()) {
+
+    <!-- SEM PEDIDOS -->
+    <section class="orders-state">
+
+      <div class="state-icon">🛍️</div>
+
+      <h2>Você ainda não realizou pedidos</h2>
+
+      <p>
+        Que tal explorar nossos produtos
+        e fazer sua primeira compra?
+      </p>
+
+      <a
+        routerLink="/"
+        class="primary-button"
+      >
+        Explorar produtos
+      </a>
+
+    </section>
+
+  } @else if (orders().length > 0) {
+
+    <!-- LISTA DE PEDIDOS -->
+    <section class="orders-list">
+
+      <div class="list-heading">
+
+        <div>
+          <h2>Histórico de compras</h2>
+
+          <p>
+            Seus pedidos mais recentes aparecem primeiro.
+          </p>
+        </div>
+
+        <span class="orders-count">
+          {{ orders().length }}
+          {{ orders().length === 1 ? 'pedido' : 'pedidos' }}
+        </span>
+
+      </div>
+
+      @for (order of orders(); track order.id) {
+
+        <article class="order-card">
+
+          <!-- INFORMAÇÕES -->
+          <div class="order-card-header">
+
+            <div class="order-identification">
+
+              <span class="order-label">
+                Pedido
+              </span>
+
+              <strong class="order-number">
+                #{{ order.id.slice(0, 8).toUpperCase() }}
+              </strong>
+
+              <span class="order-date">
+                {{ order.createdAt | date:'dd/MM/yyyy HH:mm' }}
+              </span>
+
+            </div>
+
+            <span
+              class="order-status"
+              [class.status-paid]="order.status === 'PAID'"
+              [class.status-declined]="order.status === 'DECLINED'"
+              [class.status-pending]="order.status === 'PENDING'"
+            >
+              {{ getStatusLabel(order) }}
+            </span>
+
+          </div>
+
+          <!-- PRODUTOS -->
+          <div class="order-products">
+
+            @for (
+              item of order.items.slice(0, 3);
+              track item.productId
+            ) {
+
+              <div class="product-row">
+
+                <span class="product-icon">
+                  🛍️
+                </span>
+
+                <div class="product-info">
+
+                  <strong>
+                    {{ item.productName }}
+                  </strong>
+
+                  <span>
+                    {{ item.quantity }}
+                    ×
+                    {{ item.unitPrice | currency:'BRL' }}
+                  </span>
+
+                </div>
+
+                <span class="product-subtotal">
+                  {{ item.subtotal | currency:'BRL' }}
+                </span>
+
+              </div>
+
+            }
+
+            @if (order.items.length > 3) {
+
+              <p class="more-products">
+                + {{ order.items.length - 3 }}
+                outros produtos
+              </p>
+
+            }
+
+          </div>
+
+          <!-- RODAPÉ -->
+          <div class="order-card-footer">
+
+            <div class="order-total">
+
+              <span>Total do pedido</span>
+
+              <strong>
+                {{ order.total | currency:'BRL' }}
+              </strong>
+
+            </div>
+
+            <a
+              [routerLink]="['/orders', order.id]"
+              class="details-button"
+            >
+              Ver detalhes →
+            </a>
+
+          </div>
+
+        </article>
+
+      }
+
+    </section>
+
+  }
+
+</main>

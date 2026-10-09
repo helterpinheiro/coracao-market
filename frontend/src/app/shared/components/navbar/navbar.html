@@ -1,51 +1,106 @@
 <header class="navbar">
+
   <div class="navbar-container">
 
-    <!-- Menu lateral -->
-    <button
-      class="menu-toggle"
-      type="button"
-      aria-label="Abrir categorias e filtros"
-      (click)="menuToggle.emit()"
-    >
-      ☰
-    </button>
+    <!-- Menu lateral: somente no catálogo -->
+    @if (isCatalogPage) {
+
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-label="Abrir categorias e filtros"
+        (click)="menuToggle.emit()"
+      >
+        ☰
+      </button>
+
+    }
 
     <!-- Marca -->
-    <a class="brand" routerLink="/">
-      <span class="brand-icon">🦫</span>
-
-      <div class="brand-text">
-        <strong>Coração Market</strong>
-        <small>Você no coração da gente</small>
-      </div>
-    </a>
-
-    <!-- Pesquisa -->
-    <div class="search">
-      <label class="sr-only" for="product-search">
-        Pesquisar produtos
-      </label>
-
-      <input
-        id="product-search"
-        type="search"
-        placeholder="O que você procura hoje?"
-        [ngModel]="search"
-        (ngModelChange)="onSearchChange($event)"
+    <a
+      class="brand"
+      routerLink="/"
+      aria-label="Coração Market - Página inicial"
+    >
+      <img
+        src="/assets/mascot/mascot-logo.png"
+        alt="Mascote do Coração Market"
+        class="brand-mascot"
       />
 
-      <span aria-hidden="true">⌕</span>
-    </div>
+      <div class="brand-text">
 
-    <!-- Conta e carrinho -->
-    <nav class="actions" aria-label="Navegação da conta">
+        <strong>
+          Coração Market
+        </strong>
+
+        <small>
+          Você no coração da gente
+        </small>
+
+      </div>
+
+    </a>
+
+    <!-- Pesquisa: somente no catálogo -->
+    @if (isCatalogPage) {
+
+      <div class="search">
+
+        <label
+          class="sr-only"
+          for="product-search"
+        >
+          Pesquisar produtos
+        </label>
+
+        <input
+          id="product-search"
+          type="search"
+          placeholder="O que você procura hoje?"
+          [ngModel]="search"
+          (ngModelChange)="onSearchChange($event)"
+        />
+
+        <span aria-hidden="true">
+          ⌕
+        </span>
+
+      </div>
+
+    }
+
+    <!-- Navegação -->
+    <nav
+      class="actions"
+      aria-label="Navegação da conta"
+    >
 
       @if (isAuthenticated()) {
 
+        <!-- Meus pedidos -->
+        <a
+          routerLink="/orders"
+          class="orders-link"
+          aria-label="Consultar meus pedidos"
+        >
+
+          <span aria-hidden="true">
+            📦
+          </span>
+
+          <span>
+            Meus pedidos
+          </span>
+
+        </a>
+
         <!-- Usuário autenticado -->
         <div class="account-user">
-          <span aria-hidden="true">👤</span>
+
+          <span aria-hidden="true">
+            👤
+          </span>
 
           <span class="account-name">
             Olá, {{ currentUser()?.name }}
@@ -58,31 +113,55 @@
           >
             Sair
           </button>
+
         </div>
 
       } @else {
 
         <!-- Visitante -->
-        <a routerLink="/login" class="account">
-          <span aria-hidden="true">👤</span>
-          <span>Entrar</span>
+        <a
+          routerLink="/login"
+          class="account"
+        >
+
+          <span aria-hidden="true">
+            👤
+          </span>
+
+          <span>
+            Entrar
+          </span>
+
         </a>
 
       }
 
       <!-- Carrinho -->
-      <a routerLink="/cart" class="cart">
-        <span aria-hidden="true">🛒</span>
-        <span>Carrinho</span>
+      <a
+        routerLink="/cart"
+        class="cart"
+      >
+
+        <span aria-hidden="true">
+          🛒
+        </span>
+
+        <span>
+          Carrinho
+        </span>
 
         @if (cartCount > 0) {
+
           <span class="cart-count">
             {{ cartCount }}
           </span>
+
         }
+
       </a>
 
     </nav>
 
   </div>
+
 </header>

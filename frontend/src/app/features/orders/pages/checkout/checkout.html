@@ -1,0 +1,251 @@
+<app-navbar [cartCount]="cartCount()" />
+
+<main class="checkout-page">
+
+  <!-- CABEÇALHO -->
+  <header class="checkout-header">
+
+    <a
+      routerLink="/cart"
+      class="back-link"
+    >
+      ← Voltar ao carrinho
+    </a>
+
+    <div class="header-content">
+
+      <div>
+        <span class="checkout-tag">
+          💙 Coração Market
+        </span>
+
+        <h1>Finalizar compra</h1>
+
+        <p>
+          Confira seus produtos antes de confirmar o pedido.
+        </p>
+      </div>
+
+      <div
+        class="checkout-icon"
+        aria-hidden="true"
+      >
+        🛒
+      </div>
+
+    </div>
+
+  </header>
+
+  <!-- ERROS -->
+  @if (error()) {
+
+    <div
+      class="checkout-feedback"
+      role="alert"
+    >
+      <span>⚠ {{ error() }}</span>
+
+      <button
+        type="button"
+        aria-label="Fechar mensagem"
+        (click)="error.set(null)"
+      >
+        ×
+      </button>
+    </div>
+
+  }
+
+  <!-- CARREGAMENTO -->
+  @if (loading()) {
+
+    <section
+      class="checkout-state"
+      role="status"
+    >
+      <div class="state-icon">🛒</div>
+
+      <h2>Preparando seu pedido...</h2>
+
+      <p>
+        Estamos conferindo os produtos do seu carrinho.
+      </p>
+    </section>
+
+  } @else if (!cart()?.items?.length) {
+
+    <!-- CARRINHO VAZIO -->
+    <section class="checkout-state">
+
+      <div class="state-icon">🛍️</div>
+
+      <h2>Seu carrinho está vazio</h2>
+
+      <p>
+        Adicione alguns produtos antes de finalizar sua compra.
+      </p>
+
+      <a
+        routerLink="/"
+        class="primary-button"
+      >
+        Explorar produtos
+      </a>
+
+    </section>
+
+  } @else {
+
+    <!-- CHECKOUT -->
+    <div class="checkout-layout">
+
+      <!-- PRODUTOS -->
+      <section class="checkout-products">
+
+        <div class="section-heading">
+
+          <div>
+            <h2>Resumo dos produtos</h2>
+
+            <p>
+              Confira os itens selecionados.
+            </p>
+          </div>
+
+          <span class="items-count">
+            {{ cartCount() }}
+            {{ cartCount() === 1 ? 'item' : 'itens' }}
+          </span>
+
+        </div>
+
+        <div class="products-list">
+
+          @for (
+            item of cart()!.items;
+            track item.id
+          ) {
+
+            <article class="checkout-item">
+
+              <div
+                class="product-icon"
+                aria-hidden="true"
+              >
+                🛍️
+              </div>
+
+              <div class="product-info">
+
+                <h3>
+                  {{ item.productName }}
+                </h3>
+
+                <p>
+                  {{ item.quantity }}
+                  ×
+                  {{ item.unitPrice | currency:'BRL' }}
+                </p>
+
+              </div>
+
+              <strong class="product-subtotal">
+                {{ item.subtotal | currency:'BRL' }}
+              </strong>
+
+            </article>
+
+          }
+
+        </div>
+
+        <div class="products-footer">
+
+          <span>
+            Deseja alterar algum produto?
+          </span>
+
+          <a routerLink="/cart">
+            Editar carrinho →
+          </a>
+
+        </div>
+
+      </section>
+
+      <!-- RESUMO DO PEDIDO -->
+      <aside class="order-summary">
+
+        <h2>Resumo da compra</h2>
+
+        <div class="summary-row">
+
+          <span>
+            Produtos ({{ cartCount() }})
+          </span>
+
+          <strong>
+            {{ total() | currency:'BRL' }}
+          </strong>
+
+        </div>
+
+        <div class="summary-row muted">
+
+          <span>Entrega</span>
+
+          <span>A definir</span>
+
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-total">
+
+          <span>Total dos produtos</span>
+
+          <strong>
+            {{ total() | currency:'BRL' }}
+          </strong>
+
+        </div>
+
+        <p class="summary-note">
+          Ao confirmar, seu pedido será registrado
+          e ficará aguardando pagamento.
+        </p>
+
+        <button
+          type="button"
+          class="confirm-button"
+          [disabled]="processing()"
+          (click)="confirmOrder()"
+        >
+
+          @if (processing()) {
+            Processando pedido...
+          } @else {
+            Confirmar pedido
+          }
+
+        </button>
+
+        <div class="security-note">
+          🔒 Seu pedido será associado à sua conta.
+        </div>
+
+        <a
+          routerLink="/cart"
+          class="continue-link"
+        >
+          ← Voltar ao carrinho
+        </a>
+
+      </aside>
+
+    </div>
+
+  }
+
+</main>

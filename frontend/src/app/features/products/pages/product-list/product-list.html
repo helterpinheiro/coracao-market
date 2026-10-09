@@ -36,26 +36,65 @@
   <section class="catalog">
 
     <!-- BANNER -->
-    <div class="welcome-banner">
-      <div>
-        <span class="welcome-tag">
-          💙 Bem-vindo ao nosso mercado!
-        </span>
-
+    <div class="hero-banner">
+      <div class="hero-content">
         <h1>
-          Seu mercado de sempre, agora mais pertinho!
+          Seu mercado de sempre,
+          <span>agora pertinho de você!</span>
         </h1>
 
         <p>
-          Escolha seus produtos favoritos com praticidade,
-          economia e muito carinho.
+          Qualidade, economia e muito carinho
+          em todas as suas compras.
         </p>
       </div>
 
-      <div class="mascot-placeholder" aria-hidden="true">
-        🦫
-      </div>
+      <img
+        src="/assets/mascot/mascot-cart.png"
+        alt="Castorzinho do Coração Market fazendo compras"
+        class="hero-mascot"
+      />
     </div>
+
+    <!-- MENSAGENS DO CARRINHO -->
+    @if (cartMessage()) {
+      <div
+        class="cart-feedback cart-feedback--success"
+        role="status"
+        aria-live="polite"
+      >
+        <span aria-hidden="true">✓</span>
+        <span>{{ cartMessage() }}</span>
+
+        <button
+          type="button"
+          class="cart-feedback-close"
+          aria-label="Fechar mensagem"
+          (click)="cartMessage.set(null)"
+        >
+          ×
+        </button>
+      </div>
+    }
+
+    @if (cartError()) {
+      <div
+        class="cart-feedback cart-feedback--error"
+        role="alert"
+      >
+        <span aria-hidden="true">⚠</span>
+        <span>{{ cartError() }}</span>
+
+        <button
+          type="button"
+          class="cart-feedback-close"
+          aria-label="Fechar mensagem"
+          (click)="cartError.set(null)"
+        >
+          ×
+        </button>
+      </div>
+    }
 
     <!-- CABEÇALHO DO CATÁLOGO -->
     <div class="catalog-header">
@@ -126,7 +165,7 @@
         >
           <button
             type="button"
-            [disabled]="page() === 0"
+            [disabled]="page() === 0 || loading()"
             (click)="previousPage()"
           >
             Anterior
@@ -138,7 +177,7 @@
 
           <button
             type="button"
-            [disabled]="page() + 1 >= totalPages()"
+            [disabled]="page() + 1 >= totalPages() || loading()"
             (click)="nextPage()"
           >
             Próxima

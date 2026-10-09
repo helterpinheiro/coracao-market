@@ -1,0 +1,203 @@
+<app-navbar [cartCount]="cartCount()" />
+
+<main class="cart-page">
+
+  <div class="cart-heading">
+    <div>
+      <a routerLink="/" class="back-link">
+        ← Continuar comprando
+      </a>
+
+      <h1>🛒 Meu carrinho</h1>
+
+      <p>
+        Confira os produtos que você escolheu com carinho.
+      </p>
+    </div>
+
+    <span class="items-count">
+      {{ cartCount() }}
+      {{ cartCount() === 1 ? 'item' : 'itens' }}
+    </span>
+  </div>
+
+  @if (message()) {
+    <div class="feedback feedback--success" role="status">
+      <span>{{ message() }}</span>
+
+      <button
+        type="button"
+        aria-label="Fechar mensagem"
+        (click)="message.set(null)"
+      >
+        ×
+      </button>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="feedback feedback--error" role="alert">
+      <span>{{ error() }}</span>
+
+      <button
+        type="button"
+        aria-label="Fechar mensagem"
+        (click)="error.set(null)"
+      >
+        ×
+      </button>
+    </div>
+  }
+
+  @if (loading()) {
+
+    <section class="cart-state" role="status">
+      <div class="state-icon">🛒</div>
+
+      <h2>Carregando seu carrinho...</h2>
+      <p>Estamos preparando seus produtos.</p>
+    </section>
+
+  } @else if (items().length === 0 && !error()) {
+
+    <section class="cart-state">
+      <div class="state-icon">🛒</div>
+
+      <h2>Seu carrinho está vazio</h2>
+
+      <p>
+        Que tal escolher alguns produtos para começar?
+      </p>
+
+      <a routerLink="/" class="primary-button">
+        Explorar produtos
+      </a>
+    </section>
+
+  } @else if (items().length > 0) {
+
+    <div class="cart-layout">
+
+      <!-- PRODUTOS -->
+      <section class="cart-products">
+
+        <div class="section-heading">
+          <h2>Produtos selecionados</h2>
+          <span>{{ items().length }} produtos diferentes</span>
+        </div>
+
+        @for (item of items(); track item.id) {
+
+          <article class="cart-item">
+
+            <div class="item-icon" aria-hidden="true">
+              🛍️
+            </div>
+
+            <div class="item-details">
+
+              <h3>{{ item.productName }}</h3>
+
+              <p class="unit-price">
+                {{ item.unitPrice | currency:'BRL' }}
+                por unidade
+              </p>
+
+              <button
+                type="button"
+                class="remove-button"
+                [disabled]="updatingItemId() !== null"
+                (click)="removeItem(item)"
+              >
+                Remover
+              </button>
+
+            </div>
+
+            <div class="item-actions">
+
+              <div
+                class="quantity-control"
+                aria-label="Quantidade do produto"
+              >
+                <button
+                  type="button"
+                  aria-label="Diminuir quantidade"
+                  [disabled]="item.quantity <= 1 || updatingItemId() !== null"
+                  (click)="decreaseQuantity(item)"
+                >
+                  −
+                </button>
+
+                <span>{{ item.quantity }}</span>
+
+                <button
+                  type="button"
+                  aria-label="Aumentar quantidade"
+                  [disabled]="updatingItemId() !== null"
+                  (click)="increaseQuantity(item)"
+                >
+                  +
+                </button>
+              </div>
+
+              <strong class="subtotal">
+                {{ item.subtotal | currency:'BRL' }}
+              </strong>
+
+            </div>
+
+          </article>
+
+        }
+
+      </section>
+
+      <!-- RESUMO -->
+      <aside class="cart-summary">
+
+        <h2>Resumo do pedido</h2>
+
+        <div class="summary-row">
+          <span>Produtos ({{ cartCount() }})</span>
+          <strong>{{ total() | currency:'BRL' }}</strong>
+        </div>
+
+        <div class="summary-row muted">
+          <span>Entrega</span>
+          <span>A calcular</span>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-total">
+          <span>Total dos produtos</span>
+
+          <strong>
+            {{ total() | currency:'BRL' }}
+          </strong>
+        </div>
+
+        <p class="summary-note">
+          O valor da entrega será informado
+          quando implementarmos a finalização do pedido.
+        </p>
+
+        <a
+        routerLink="/checkout"
+        class="checkout-button"
+        >
+        Finalizar compra
+        </a>
+
+        <a routerLink="/" class="continue-link">
+          ← Continuar comprando
+        </a>
+
+      </aside>
+
+    </div>
+
+  }
+
+</main>

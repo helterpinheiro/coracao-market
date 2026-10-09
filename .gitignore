@@ -1,5 +1,12 @@
 # =========================================================
-# Java
+# CORACAO MARKET - GITIGNORE
+# Backend: Java 21 / Spring Boot 3
+# Frontend: Angular / Node.js
+# =========================================================
+
+
+# =========================================================
+# JAVA / SPRING BOOT
 # =========================================================
 
 *.class
@@ -8,34 +15,80 @@
 # Maven
 target/
 .mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
 
 # Gradle
 .gradle/
 build/
 
-# Package files
+# Java packages
 *.jar
 *.war
 *.nar
 *.ear
 
+# JVM crash reports
+hs_err_pid*
+replay_pid*
+
 
 # =========================================================
-# Angular / Node.js
+# ANGULAR / NODE.JS
 # =========================================================
 
+# Dependencies
 node_modules/
+
+# Build outputs
 dist/
 .angular/
+out-tsc/
+
+# Cache
 .cache/
+.npm/
+.eslintcache
+
+# Test coverage
+coverage/
+
+# Package manager logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
 
 # =========================================================
-# IDEs
+# ENVIRONMENT VARIABLES / SECRETS
+# =========================================================
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Local Spring Boot configuration
+application-local.yml
+application-local.yaml
+application-local.properties
+
+# Local Angular configuration
+frontend/src/environments/environment.local.ts
+
+# Local configuration overrides
+*.local
+
+# Private keys and certificates
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+
+
+# =========================================================
+# IDE / EDITORS
 # =========================================================
 
 # IntelliJ IDEA
@@ -50,24 +103,17 @@ yarn-error.log*
 .settings/
 
 # VS Code
-.vscode/
+.vscode/*
+!.vscode/extensions.json
+
+# Editor temporary files
+*.swp
+*.swo
+*~
 
 
 # =========================================================
-# Environment / Secrets
-# =========================================================
-
-.env
-.env.*
-!.env.example
-
-application-local.yml
-application-local.yaml
-application-local.properties
-
-
-# =========================================================
-# Operating System
+# OPERATING SYSTEM
 # =========================================================
 
 .DS_Store
@@ -75,26 +121,18 @@ Thumbs.db
 
 
 # =========================================================
-# Logs
+# LOGS
 # =========================================================
 
 logs/
-*.log
 
 
 # =========================================================
-# Java Virtual Machine
+# TEMPORARY FILES
 # =========================================================
 
-hs_err_pid*
-replay_pid*
-
-
-# =========================================================
-# Temporary files
-# =========================================================
-
+tmp/
+temp/
 *.tmp
 *.temp
-*.swp
-*.swo
+*.bak

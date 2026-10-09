@@ -1,0 +1,302 @@
+<app-navbar [cartCount]="cartCount()" />
+
+<main class="order-page">
+
+  <header class="page-header">
+    <a routerLink="/" class="back-link">
+      ← Voltar ao catálogo
+    </a>
+
+    <h1>Detalhes do pedido</h1>
+
+    <p>
+      Acompanhe as informações da sua compra.
+    </p>
+  </header>
+
+  @if (error()) {
+    <div class="feedback feedback--error" role="alert">
+      <span>{{ error() }}</span>
+
+      <button
+        type="button"
+        aria-label="Fechar mensagem"
+        (click)="error.set(null)"
+      >
+        ×
+      </button>
+    </div>
+  }
+
+  @if (message()) {
+    <div class="feedback feedback--success" role="status">
+      <span>{{ message() }}</span>
+
+      <button
+        type="button"
+        aria-label="Fechar mensagem"
+        (click)="message.set(null)"
+      >
+        ×
+      </button>
+    </div>
+  }
+
+  @if (loading()) {
+
+    <section class="order-state" role="status">
+      <div class="state-icon">📦</div>
+
+      <h2>Carregando seu pedido...</h2>
+      <p>Estamos consultando os detalhes da compra.</p>
+    </section>
+
+  } @else if (order(); as currentOrder) {
+
+    <!-- STATUS -->
+    <section class="status-card">
+
+      @if (currentOrder.paymentStatus === 'APPROVED') {
+
+        <div class="status-icon success">✓</div>
+
+        <h2>Compra confirmada!</h2>
+
+        <p>
+          Seu pagamento foi aprovado e o pedido está confirmado.
+        </p>
+
+      } @else if (currentOrder.paymentStatus === 'DECLINED') {
+
+        <div class="status-icon declined">✕</div>
+
+        <h2>Pagamento recusado</h2>
+
+        <p>
+          Não foi possível aprovar o pagamento deste pedido.
+        </p>
+
+      } @else {
+
+        <div class="status-icon pending">⏳</div>
+
+        <h2>Pedido aguardando pagamento</h2>
+
+        <p>
+          Seu pedido foi criado e está aguardando
+          a confirmação do pagamento.
+        </p>
+
+      }
+
+      <span
+        class="status-badge"
+        [class.status-badge--paid]="currentOrder.status === 'PAID'"
+        [class.status-badge--declined]="currentOrder.status === 'DECLINED'"
+      >
+        @switch (currentOrder.status) {
+          @case ('PAID') {
+            Pago
+          }
+          @case ('DECLINED') {
+            Recusado
+          }
+          @default {
+            Pendente
+          }
+        }
+      </span>
+
+    </section>
+
+    <div class="order-layout">
+
+      <!-- INFORMAÇÕES DO PEDIDO -->
+      <section class="order-content">
+
+        <div class="order-info">
+
+          <h2>Informações do pedido</h2>
+
+          <div class="info-row">
+            <span>Número do pedido</span>
+            <strong class="order-id">
+              {{ currentOrder.id }}
+            </strong>
+          </div>
+
+          <div class="info-row">
+            <span>Data do pedido</span>
+            <strong>
+              {{ currentOrder.createdAt | date:'dd/MM/yyyy HH:mm' }}
+            </strong>
+          </div>
+
+          <div class="info-row">
+            <span>Status do pagamento</span>
+
+            <strong>
+              @switch (currentOrder.paymentStatus) {
+                @case ('APPROVED') {
+                  Aprovado
+                }
+                @case ('DECLINED') {
+                  Recusado
+                }
+                @default {
+                  Pendente
+                }
+              }
+            </strong>
+          </div>
+
+        </div>
+
+        <!-- PRODUTOS -->
+        <div class="order-products">
+
+          <h2>Produtos do pedido</h2>
+
+          @for (
+            item of currentOrder.items;
+            track item.productId
+          ) {
+
+            <article class="order-item">
+
+              <div class="product-icon" aria-hidden="true">
+                🛍️
+              </div>
+
+              <div class="product-info">
+
+                <h3>{{ item.productName }}</h3>
+
+                <p>
+                  {{ item.quantity }}
+                  ×
+                  {{ item.unitPrice | currency:'BRL' }}
+                </p>
+
+              </div>
+
+              <strong>
+                {{ item.subtotal | currency:'BRL' }}
+              </strong>
+
+            </article>
+
+          }
+
+        </div>
+
+      </section>
+
+      <!-- RESUMO E PAGAMENTO -->
+      <aside class="payment-card">
+
+        <h2>Resumo da compra</h2>
+
+        <div class="summary-row">
+          <span>Produtos</span>
+
+          <strong>
+            {{ currentOrder.total | currency:'BRL' }}
+          </strong>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-total">
+          <span>Total</span>
+
+          <strong>
+            {{ currentOrder.total | currency:'BRL' }}
+          </strong>
+        </div>
+
+        @if (currentOrder.paymentStatus === 'PENDING') {
+
+          <div class="payment-section">
+
+            <h3>Simular pagamento</h3>
+
+            <p>
+              Esta é uma simulação para testar
+              o fluxo de pagamentos do Coração Market.
+              Nenhuma cobrança real será realizada.
+            </p>
+
+            <button
+              type="button"
+              class="payment-button"
+              [disabled]="processing()"
+              (click)="simulatePayment(true)"
+            >
+              @if (processing()) {
+                Processando...
+              } @else {
+                Simular aprovação
+              }
+            </button>
+
+            <button
+              type="button"
+              class="decline-button"
+              [disabled]="processing()"
+              (click)="simulatePayment(false)"
+            >
+              Simular recusa
+            </button>
+
+          </div>
+
+        } @else {
+
+          <div class="payment-result">
+
+            @if (currentOrder.paymentStatus === 'APPROVED') {
+              <p class="approved-text">
+                ✓ Pagamento aprovado
+              </p>
+            } @else {
+              <p class="declined-text">
+                ✕ Pagamento recusado
+              </p>
+            }
+
+          </div>
+
+        }
+
+        <a routerLink="/" class="continue-link">
+          ← Continuar comprando
+        </a>
+
+      </aside>
+
+    </div>
+
+  } @else {
+
+    <section class="order-state">
+      <div class="state-icon">📦</div>
+
+      <h2>Não foi possível exibir o pedido</h2>
+
+      <p>
+        Verifique o endereço ou tente consultar novamente.
+      </p>
+
+      <button
+        type="button"
+        class="retry-button"
+        (click)="retry()"
+      >
+        Tentar novamente
+      </button>
+    </section>
+
+  }
+
+</main>

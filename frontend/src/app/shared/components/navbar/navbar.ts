@@ -6,8 +6,14 @@ import {
   inject
 } from '@angular/core';
 
+import { CartService } from '../../../features/cart/services/cart';
+
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+
+import {
+  Router,
+  RouterLink
+} from '@angular/router';
 
 import { AuthService } from '../../../core/auth/services/auth';
 
@@ -24,6 +30,7 @@ import { AuthService } from '../../../core/auth/services/auth';
 export class Navbar {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly cartService = inject(CartService);
 
   @Input() cartCount = 0;
   @Input() search = '';
@@ -34,12 +41,21 @@ export class Navbar {
   readonly currentUser = this.authService.currentUser;
   readonly isAuthenticated = this.authService.isAuthenticated;
 
+  // Pesquisa e filtros são utilizados somente no catálogo.
+  get isCatalogPage(): boolean {
+    return this.router.url.split('?')[0] === '/';
+  }
+
   onSearchChange(value: string): void {
     this.searchChange.emit(value);
   }
 
   logout(): void {
     this.authService.logout();
+
+    // Remove os dados do carrinho do usuário anterior.
+    this.cartService.clearLocalCart();
+
     this.router.navigateByUrl('/');
   }
 }
