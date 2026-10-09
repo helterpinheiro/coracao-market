@@ -32,14 +32,12 @@ public class AuthService {
     @Transactional
     public AuthResponse register(RegisterRequest request) {
         
-        if (userRepository.existsByEmailIgnoreCase(request.email())) {
-            throw new IllegalArgumentException(
-                "Email is already registered"
-            );
-        }
+        String normalizedEmail =
+            request.email().trim().toLowerCase(java.util.Locale.ROOT);
 
-         String normalizedEmail =
-            request.email().trim().toLowerCase();
+        if (userRepository.existsByEmailIgnoreCase(normalizedEmail)) {
+            throw new EmailAlreadyExistsException();
+        }
 
         String encodedPassword =
             passwordEncoder.encode(request.password());
