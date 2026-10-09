@@ -1,0 +1,83 @@
+<app-navbar
+  [search]="search()"
+  [cartCount]="cartCount()"
+  (searchChange)="search.set($event)"
+  (menuToggle)="sidebarOpen.set(!sidebarOpen())"
+/>
+
+<main class="page-container">
+
+  <div
+    class="sidebar-container"
+    [class.open]="sidebarOpen()"
+  >
+    <app-sidebar
+      [categories]="categories()"
+      [selectedCategory]="selectedCategory()"
+      [maxPrice]="maxPrice()"
+      [sortOrder]="sortOrder()"
+      (categoryChange)="selectedCategory.set($event)"
+      (maxPriceChange)="maxPrice.set($event)"
+      (sortOrderChange)="sortOrder.set($event)"
+      (closeSidebar)="sidebarOpen.set(false)"
+    />
+  </div>
+
+  @if (sidebarOpen()) {
+    <button
+      class="sidebar-backdrop"
+      type="button"
+      aria-label="Fechar filtros"
+      (click)="sidebarOpen.set(false)"
+    ></button>
+  }
+
+  <section class="catalog">
+
+    <div class="welcome-banner">
+      <div>
+        <span class="welcome-tag">💙 Bem-vindo ao nosso mercado!</span>
+
+        <h1>Seu mercado de sempre, agora mais pertinho!</h1>
+
+        <p>
+          Escolha seus produtos favoritos com praticidade,
+          economia e muito carinho.
+        </p>
+      </div>
+
+      <div class="mascot-placeholder" aria-hidden="true">
+        🦫
+      </div>
+    </div>
+
+    <div class="catalog-header">
+      <div>
+        <h2>Nossos produtos</h2>
+        <p>Escolha tudo o que precisa para sua casa.</p>
+      </div>
+
+      <span class="product-count">
+        {{ filteredProducts().length }} produtos
+      </span>
+    </div>
+
+    @if (filteredProducts().length > 0) {
+      <div class="products-grid">
+        @for (product of filteredProducts(); track product.id) {
+          <app-product-card
+            [product]="product"
+            (addToCart)="addToCart($event)"
+          />
+        }
+      </div>
+    } @else {
+      <div class="empty-state">
+        <h3>Nenhum produto encontrado</h3>
+        <p>Tente ajustar os filtros ou pesquisar outro produto.</p>
+      </div>
+    }
+
+  </section>
+
+</main>

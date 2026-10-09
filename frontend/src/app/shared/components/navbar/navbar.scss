@@ -1,0 +1,163 @@
+.navbar {
+  background: white;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-container {
+  max-width: 1440px;
+  margin: auto;
+  padding: 18px 32px;
+
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--primary);
+  min-width: 230px;
+}
+
+.brand-icon {
+  font-size: 40px;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+
+  strong {
+    font-size: 20px;
+    font-weight: 900;
+  }
+
+  small {
+    font-size: 11px;
+    color: var(--muted);
+  }
+}
+
+.search {
+  flex: 1;
+  position: relative;
+
+  input {
+    width: 100%;
+    padding: 14px 45px 14px 18px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--background);
+
+    &:focus {
+      border-color: var(--secondary);
+    }
+  }
+
+  span {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+    color: var(--primary);
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 24px;
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 700;
+    white-space: nowrap;
+
+    &:hover {
+      color: var(--primary);
+    }
+  }
+}
+
+.cart {
+  position: relative;
+}
+
+.cart-count {
+  background: var(--secondary);
+  color: #063e39;
+  border-radius: 50%;
+  min-width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+}
+
+.menu-toggle {
+  display: none;
+  background: transparent;
+  border: 0;
+  font-size: 25px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+@media (max-width: 900px) {
+  .navbar-container {
+    padding: 14px 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+
+  .brand {
+    min-width: auto;
+  }
+
+  .search {
+    order: 3;
+    flex-basis: 100%;
+  }
+
+  .actions {
+    margin-left: auto;
+  }
+
+  .actions a span:not(.cart-count) {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-text small {
+    display: none;
+  }
+
+  .brand-text strong {
+    font-size: 16px;
+  }
+
+  .brand-icon {
+    font-size: 30px;
+  }
+}

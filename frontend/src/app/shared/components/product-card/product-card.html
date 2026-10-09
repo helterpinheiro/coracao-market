@@ -1,0 +1,30 @@
+<p>product-card works!</p>
+<article class="product-card">
+
+  <div class="product-image">
+    <img
+      [src]="product.image"
+      [alt]="product.name"
+      loading="lazy"
+    />
+  </div>
+
+  <div class="product-info">
+    <span class="category">{{ product.category }}</span>
+
+    <h3>{{ product.name }}</h3>
+
+    <p class="price">
+      {{ product.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+    </p>
+
+    <button
+      type="button"
+      [disabled]="product.stock === 0"
+      (click)="addToCart.emit(product)"
+    >
+      {{ product.stock > 0 ? '+ Adicionar' : 'Indisponível' }}
+    </button>
+  </div>
+
+</article>

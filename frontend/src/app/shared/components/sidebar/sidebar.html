@@ -1,0 +1,83 @@
+<aside class="sidebar">
+
+  <div class="sidebar-header">
+    <h2>Filtros</h2>
+
+    <button
+      class="close-button"
+      type="button"
+      aria-label="Fechar filtros"
+      (click)="closeSidebar.emit()"
+    >
+      ✕
+    </button>
+  </div>
+
+  <section class="filter-section">
+    <h3>Categorias</h3>
+
+    <div class="categories">
+      <button
+        type="button"
+        [class.active]="selectedCategory === ''"
+        (click)="categoryChange.emit('')"
+      >
+        Todos os produtos
+      </button>
+
+      @for (category of categories; track category) {
+        <button
+          type="button"
+          [class.active]="selectedCategory === category"
+          (click)="categoryChange.emit(category)"
+        >
+          {{ category }}
+        </button>
+      }
+    </div>
+  </section>
+
+  <section class="filter-section">
+    <h3>Preço máximo</h3>
+
+    <label for="max-price">Até quanto deseja gastar?</label>
+
+    <input
+      id="max-price"
+      type="number"
+      min="0"
+      step="0.01"
+      placeholder="Ex.: 50,00"
+      [ngModel]="maxPrice"
+      (ngModelChange)="updateMaxPrice($event)"
+    />
+  </section>
+
+  <section class="filter-section">
+    <h3>Ordenar por</h3>
+
+    <label class="sr-only" for="sort-order">
+      Ordenação dos produtos
+    </label>
+
+    <select
+      id="sort-order"
+      [ngModel]="sortOrder"
+      (ngModelChange)="sortOrderChange.emit($event)"
+    >
+      <option value="default">Padrão</option>
+      <option value="price-asc">Menor preço</option>
+      <option value="price-desc">Maior preço</option>
+      <option value="name">Nome A-Z</option>
+    </select>
+  </section>
+
+  <button
+    class="clear-button"
+    type="button"
+    (click)="clearFilters()"
+  >
+    Limpar filtros
+  </button>
+
+</aside>

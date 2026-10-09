@@ -1,0 +1,55 @@
+<header class="navbar">
+  <div class="navbar-container">
+
+    <button
+      class="menu-toggle"
+      type="button"
+      aria-label="Abrir categorias e filtros"
+      (click)="menuToggle.emit()"
+    >
+      ☰
+    </button>
+
+    <a class="brand" href="/">
+      <span class="brand-icon">🦫</span>
+
+      <div class="brand-text">
+        <strong>Coração Market</strong>
+        <small>Você no coração da gente</small>
+      </div>
+    </a>
+
+    <div class="search">
+      <label class="sr-only" for="product-search">
+        Pesquisar produtos
+      </label>
+
+      <input
+        id="product-search"
+        type="search"
+        placeholder="O que você procura hoje?"
+        [ngModel]="search"
+        (ngModelChange)="onSearchChange($event)"
+      />
+
+      <span aria-hidden="true">⌕</span>
+    </div>
+
+    <nav class="actions" aria-label="Navegação da conta">
+      <a href="/login" class="account">
+        <span aria-hidden="true">👤</span>
+        <span>Minha conta</span>
+      </a>
+
+      <a href="/cart" class="cart">
+        <span aria-hidden="true">🛒</span>
+        <span>Carrinho</span>
+
+        @if (cartCount > 0) {
+          <span class="cart-count">{{ cartCount }}</span>
+        }
+      </a>
+    </nav>
+
+  </div>
+</header>
