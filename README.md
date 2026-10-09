@@ -390,3 +390,63 @@ curl -X GET http://localhost:8080/api/orders/UUID_DO_PEDIDO \
   -H "Authorization: Bearer SEU_TOKEN_JWT"
 ```
 
+## Coração Market - Frontend
+
+Interface web do Coração Market, desenvolvida com Angular, responsável pela experiência de compra dos usuários e pela integração com a API REST do backend.
+
+### Tecnologias utilizadas
+
+| Tecnologia | Finalidade |
+|---|---|
+| **Angular** | Framework utilizado para desenvolver a aplicação web. |
+| **TypeScript** | Linguagem utilizada para implementar componentes, serviços e regras da interface. |
+| **HTML5 e CSS3** | Estruturação e estilização das páginas. |
+| **Angular Standalone Components** | Organização dos componentes sem a necessidade de módulos tradicionais (`NgModules`). |
+| **Angular Signals** | Gerenciamento reativo de estados da interface. |
+| **Angular Router** | Navegação entre as páginas da aplicação. |
+| **Angular HttpClient** | Comunicação com os endpoints REST do backend. |
+| **HTTP Interceptors** | Inclusão automática do token JWT nas requisições autenticadas. |
+| **Route Guards** | Proteção de rotas que exigem autenticação. |
+| **JWT** | Autenticação do usuário por meio de tokens fornecidos pelo backend. |
+| **Node.js e npm** | Gerenciamento de dependências e execução do ambiente de desenvolvimento. |
+
+### Executando o frontend
+
+### Pré-requisitos
+
+* Node.js e npm
+* Backend do Coração Market em execução
+
+1. ### Clone o repositório
+
+```
+git clone https://github.com/helterpinheiro/coracao-market.git
+cd coracao-market/frontend
+```
+
+2. ### Instale as dependências
+
+> npm install
+
+3. ### Inicie a aplicação
+
+> npm start
+
+4. ### Acesse a aplicação
+
+Após a aplicação inicializar, abra:
+
+> http://localhost:4200
+
+O frontend consome a API REST do backend. Portanto, certifique-se de que o servidor Spring Boot esteja em execução e que a URL da API esteja configurada corretamente.
+
+### Funcionalidades
+
+* Cadastro e autenticação de usuários.
+* Consulta, pesquisa e filtragem de produtos.
+* Paginação do catálogo.
+* Gerenciamento do carrinho de compras.
+* Finalização de pedidos.
+* Simulação de pagamentos.
+* Consulta do histórico de pedidos.
+* Proteção de rotas e requisições autenticadas com JWT.
